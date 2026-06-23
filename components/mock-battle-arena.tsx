@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { startBattle, performBattleAction, finalizeBattle } from '@/app/actions/battles'
-import { getCharacterSpells } from '@/app/actions/spells'
+import { mockStartBattle, mockPerformBattleAction, mockFinalizeBattle } from '@/app/actions/mock-battles'
 import { BattleDisplay } from './battle-display'
 import { BattleLog } from './battle-log'
 import { SpellSelector } from './spell-selector'
@@ -38,7 +37,7 @@ interface Character {
   critChance: number
 }
 
-interface BattleArenaProps {
+interface MockBattleArenaProps {
   character: Character
   enemies: Enemy[]
   characterSpells: Spell[]
@@ -47,12 +46,12 @@ interface BattleArenaProps {
 
 type BattlePhase = 'select' | 'fighting' | 'over'
 
-export function BattleArena({
+export function MockBattleArena({
   character,
   enemies,
   characterSpells,
   userId,
-}: BattleArenaProps) {
+}: MockBattleArenaProps) {
   const [phase, setPhase] = useState<BattlePhase>('select')
   const [selectedEnemy, setSelectedEnemy] = useState<Enemy | null>(null)
   const [battleState, setBattleState] = useState<CombatState | null>(null)
@@ -61,7 +60,7 @@ export function BattleArena({
   const handleSelectEnemy = async (enemy: Enemy) => {
     setLoading(true)
     try {
-      const result = await startBattle(character.id, enemy.id)
+      const result = await mockStartBattle(character.id, enemy.id)
       setSelectedEnemy(enemy)
       setBattleState(result.state)
       setPhase('fighting')
@@ -78,15 +77,15 @@ export function BattleArena({
 
     setLoading(true)
     try {
-      const newState = await performBattleAction(character.id, selectedEnemy.id, battleState, action)
+      const newState = await mockPerformBattleAction(character.id, selectedEnemy.id, battleState, action)
       setBattleState(newState)
 
       if (newState.isOver) {
-        await finalizeBattle(userId, character.id, selectedEnemy.id, newState)
+        await mockFinalizeBattle(userId, character.id, selectedEnemy.id, newState)
         setPhase('over')
       }
     } catch (error) {
-      console.error('Failed to perform action:', error)
+      console.error('[v0] Failed to perform action:', error)
     } finally {
       setLoading(false)
     }
@@ -174,7 +173,7 @@ export function BattleArena({
           </h1>
           <p className="text-slate-300">
             {isVictory
-              ? `You defeated ${selectedEnemy?.name}!`
+              ? `You defeated ${selectedEnemy?.name}! Gained ${selectedEnemy?.experienceReward} XP`
               : `You were defeated by ${selectedEnemy?.name}.`}
           </p>
         </div>

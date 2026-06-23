@@ -41,7 +41,7 @@ export function CharacterSelection({ characters }: CharacterSelectionProps) {
         {/* Characters Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {characters.map((character) => (
-            <Link key={character.id} href={`/game/${character.id}`}>
+            <Link key={character.id} href={`/battle`}>
               <div className="card hover:border-primary/50 cursor-pointer transition-all transform hover:scale-105">
                 <div className="flex justify-between items-start mb-4">
                   <div>
